@@ -1,0 +1,2 @@
+pdfplumber==0.11.4
+nltk==3.9.1
