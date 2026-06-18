@@ -1,0 +1,133 @@
+{
+  "@context": {
+    "@vocab": "http://example.org/ontologia-artigo#",
+
+    "titulo": "http://schema.org/name",
+    "autores": "http://schema.org/author",
+    "ano": "http://schema.org/datePublished",
+    "fonte": "http://schema.org/isPartOf",
+
+    "Artigo": "ScholarlyArticle",
+    "Objetivo": "Objective",
+    "Problema": "ResearchProblem",
+    "Metodologia": "Methodology",
+    "Contribuicao": "Contribution",
+    "Referencia": "BibliographicReference",
+    "Termo": "Term",
+
+    "temObjetivo": {
+      "@id": "temObjetivo",
+      "@type": "@id"
+    },
+    "temProblema": {
+      "@id": "temProblema",
+      "@type": "@id"
+    },
+    "usaMetodologia": {
+      "@id": "usaMetodologia",
+      "@type": "@id"
+    },
+    "temContribuicao": {
+      "@id": "temContribuicao",
+      "@type": "@id"
+    },
+    "citaReferencia": {
+      "@id": "citaReferencia",
+      "@type": "@id",
+      "@container": "@set"
+    },
+    "mencionaTermo": {
+      "@id": "mencionaTermo",
+      "@type": "@id",
+      "@container": "@set"
+    },
+
+    "textoExtraido": "http://example.org/ontologia-artigo#textoExtraido",
+    "trechoOriginal": "http://example.org/ontologia-artigo#trechoOriginal",
+    "frequencia": "http://example.org/ontologia-artigo#frequencia",
+    "nomeTermo": "http://example.org/ontologia-artigo#nomeTermo"
+  },
+
+  "@graph": [
+    {
+      "@id": "_:artigo_001",
+      "@type": "Artigo",
+      "titulo": "Deep Learning Approaches for Protein Structure Prediction in Genomic Data",
+      "autores": ["Silva, J.", "Tanaka, M.", "Costa, R."],
+      "ano": 2023,
+      "fonte": "IEEE Xplore",
+
+      "temObjetivo": "_:obj_001",
+      "temProblema": "_:prob_001",
+      "usaMetodologia": "_:met_001",
+      "temContribuicao": "_:contrib_001",
+
+      "citaReferencia": [
+        "_:ref_001",
+        "_:ref_002"
+      ],
+
+      "mencionaTermo": [
+        "_:termo_001",
+        "_:termo_002",
+        "_:termo_003"
+      ]
+    },
+
+    {
+      "@id": "_:obj_001",
+      "@type": "Objetivo",
+      "textoExtraido": "The objective of this study is to evaluate the performance of deep neural networks in predicting protein secondary structure from genomic sequence data."
+    },
+
+    {
+      "@id": "_:prob_001",
+      "@type": "Problema",
+      "textoExtraido": "Existing structure prediction methods struggle to generalize across heterogeneous genomic datasets, limiting their applicability in real bioinformatics pipelines."
+    },
+
+    {
+      "@id": "_:met_001",
+      "@type": "Metodologia",
+      "textoExtraido": "trechoOriginal",
+      "trechoOriginal": "We applied a convolutional neural network trained on annotated protein sequence datasets, followed by cross-validation against benchmark genomic corpora."
+    },
+
+    {
+      "@id": "_:contrib_001",
+      "@type": "Contribuicao",
+      "textoExtraido": "Our study contributes to bioinformatics research by providing a reproducible pipeline for secondary structure prediction validated across three public genomic databases."
+    },
+
+    {
+      "@id": "_:ref_001",
+      "@type": "Referencia",
+      "textoExtraido": "Jones, D. T. (1999). Protein secondary structure prediction based on position-specific scoring matrices. Journal of Molecular Biology, 292(2), 195-202."
+    },
+
+    {
+      "@id": "_:ref_002",
+      "@type": "Referencia",
+      "textoExtraido": "Senior, A. W. et al. (2020). Improved protein structure prediction using potentials from deep learning. Nature, 577(7792), 706-710."
+    },
+
+    {
+      "@id": "_:termo_001",
+      "@type": "Termo",
+      "nomeTermo": "protein structure",
+      "frequencia": 47
+    },
+    {
+      "@id": "_:termo_002",
+      "@type": "Termo",
+      "nomeTermo": "genomic sequence",
+      "frequencia": 33
+    },
+    {
+      "@id": "_:termo_003",
+      "@type": "Termo",
+      "nomeTermo": "neural network",
+      "frequencia": 28
+    }
+  ]
+}
