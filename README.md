@@ -1,4 +1,4 @@
-# README: Análise de Artigos Científicos com PLN
+# Análise de Artigos Científicos com PLN
 
 Este projeto foi desenvolvido para a disciplina de Introdução à Inteligência Artificial (IIA) do Departamento de Informática da Universidade Estadual de Maringá (UEM). O objetivo principal é utilizar técnicas de Processamento de Linguagem Natural (PLN) para analisar textos científicos. O tema selecionado pela equipe (Eduardo, Janaina e Nuno) foi "Bioinformática", utilizando artigos da base de dados IEEE Xplore.
 
@@ -6,23 +6,14 @@ Este projeto foi desenvolvido para a disciplina de Introdução à Inteligência
 
 O sistema lê e processa 12 artigos científicos em formato PDF. As etapas de execução do pipeline incluem:
 
-* 
 **Etapa 1:** Leitura de arquivos PDF em um diretório e pré-processamento textual, englobando a remoção de stop-words e lematização. A etapa também identifica os 10 termos mais citados e extrai as referências bibliográficas.
 
-
-* 
 **Etapa 2:** Extração de informações específicas diretamente do texto, como objetivo, problema, método e contribuições da pesquisa.
 
-
-* 
 **Etapa 3:** Salvamento dos dados extraídos na forma de uma ontologia de artigo científico no formato JSON-LD.
 
-
-* 
 **Visualizações:** Geração de nuvens de palavras, gráficos de barras de frequência, heatmaps de coocorrência e análise da evolução temporal dos termos ao longo dos anos.
 
-
-* 
 **Etapa 4:** Avaliação de desempenho do sistema de extração de informações em comparação com anotações manuais.
 
 
