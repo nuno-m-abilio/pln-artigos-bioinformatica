@@ -9,7 +9,7 @@ import re
 from collections import Counter
 
 import nltk
-import pdfplumber
+import fitz
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import sent_tokenize, word_tokenize
@@ -32,18 +32,51 @@ def baixar_recursos_nltk():
 
 # ── Leitura de PDF ─────────────────────────────────────────────────────────────
 
+_REGEX_RODAPE_IEEE = re.compile(
+    r"Authorized licensed use limited to:.*?Restrictions apply\.",
+    flags=re.IGNORECASE | re.DOTALL
+)
+
+_REGEX_CABECHALHO_IEEE = re.compile(
+    r"(IEEE TRANSACTIONS ON|JOURNAL OF|et al\.:)",
+    flags=re.IGNORECASE
+)
+
 def ler_pdf(caminho_pdf: str) -> str:
-    """Extrai todo o texto de um arquivo PDF usando pdfplumber."""
-    texto = ""
+    """
+    Extrai o texto de um arquivo PDF respeitando o layout de colunas (usando blocos).
+    Remove quebras de linha no meio de palavras e filtra cabeçalhos/rodapés.
+    """
+    texto_completo = ""
     try:
-        with pdfplumber.open(caminho_pdf) as pdf:
-            for pagina in pdf.pages:
-                conteudo = pagina.extract_text()
-                if conteudo:
-                    texto += conteudo + "\n"
+        doc = fitz.open(caminho_pdf)
+        
+        for pagina in doc:
+            blocos = pagina.get_text("blocks")
+            
+            # Correção: Divide a página estritamente ao meio (x < 300 é esquerda, x >= 300 é direita).
+            # Em seguida, ordena verticalmente (b[1]) dentro de cada metade.
+            blocos_ordenados = sorted(blocos, key=lambda b: (0 if b[0] < 300 else 1, b[1]))
+            
+            for bloco in blocos_ordenados:
+                texto_bloco = bloco[4]
+                
+                # Ignora marca d'água da UEM/IEEE e cabeçalhos
+                if _REGEX_RODAPE_IEEE.search(texto_bloco):
+                    continue
+                if _REGEX_CABECHALHO_IEEE.search(texto_bloco) or len(texto_bloco.strip()) < 5:
+                    continue
+                
+                # Reconstrói palavras e frases quebradas
+                texto_bloco = re.sub(r"-\n", "", texto_bloco)
+                texto_bloco = texto_bloco.replace("\n", " ")
+                texto_completo += texto_bloco.strip() + "\n\n"
+                
+        doc.close()
     except Exception as e:
         print(f"  [ERRO] Não foi possível ler '{caminho_pdf}': {e}")
-    return texto
+        
+    return texto_completo
 
 
 def ler_pdfs_do_diretorio(diretorio: str) -> dict[str, str]:
@@ -111,46 +144,29 @@ def separar_corpo_e_referencias(texto: str) -> tuple[str, str]:
 
 def extrair_referencias(secao_referencias: str) -> list[str]:
     """
-    Extrai referências individuais da seção de referências.
-    Suporta dois formatos comuns:
-      - Numeradas: [1] Autor...  ou  1. Autor...
-      - Por autor: Sobrenome, I. (Ano). Título...
+    Extrai referências individuais buscando padrões numéricos (ex: [1] Autor...).
+    Usa lookahead (?=...) para capturar tudo até a próxima referência ou o fim do texto.
     """
     if not secao_referencias:
         return []
 
-    linhas = secao_referencias.splitlines()
-
-    # Remove cabeçalho (ex: "References")
-    if linhas and _REGEX_REFERENCIAS.search(linhas[0]):
-        linhas = linhas[1:]
-
+    # Regex: Procura por [1] ou 1., seguido de letra maiúscula, e captura tudo 
+    # até encontrar o próximo [2] ou o final do texto.
+    padrao = re.compile(
+        r"(\[\d+\])\s+[A-Z].+?(?=(\[\d+\])\s+[A-Z]|$)", 
+        flags=re.DOTALL | re.IGNORECASE
+    )
+    
     referencias = []
-    ref_atual = ""
-
-    inicio_numerada = re.compile(r"^\s*(\[\d+\]|\d+[\.\)])\s+\S")
-    inicio_autor = re.compile(r"^\s*[A-Z][a-zA-Zá-ú\-]+,\s+[A-Z]")
-
-    for linha in linhas:
-        linha = linha.strip()
-        if not linha:
-            continue
-
-        nova_ref = inicio_numerada.match(linha) or inicio_autor.match(linha)
-
-        if nova_ref:
-            if ref_atual.strip():
-                referencias.append(ref_atual.strip())
-            ref_atual = linha
-        else:
-            ref_atual += " " + linha
-
-    if ref_atual.strip():
-        referencias.append(ref_atual.strip())
-
-    # Filtra entradas muito curtas (ruído)
-    referencias = [r for r in referencias if len(r) > 20]
-
+    
+    for match in padrao.finditer(secao_referencias):
+        ref = match.group(0).strip()
+        # Limpa múltiplos espaços/quebras de linha internas que possam ter sobrado
+        ref = re.sub(r"\s+", " ", ref)
+        
+        if len(ref) > 20:
+            referencias.append(ref)
+            
     return referencias
 
 
@@ -159,12 +175,14 @@ def extrair_referencias(secao_referencias: str) -> list[str]:
 _STOP_WORDS = set(stopwords.words("english"))
 
 # Stop words extras comuns em artigos científicos
+
 _STOP_WORDS_EXTRAS = {
     "et", "al", "fig", "figure", "table", "also", "show", "shown",
     "use", "used", "using", "based", "however", "thus", "therefore",
     "paper", "study", "result", "results", "proposed", "method",
     "approach", "work", "article", "section", "ieee", "doi", "http",
     "https", "www", "e", "g", "i", "ii", "iii", "iv",
+    "university", "department", "universidade", "maringa"
 }
 
 _STOP_WORDS.update(_STOP_WORDS_EXTRAS)
