@@ -1,5 +1,5 @@
 # Leitura de PDFs
-pdfplumber
+pymupdf
 
 # NLP
 nltk
