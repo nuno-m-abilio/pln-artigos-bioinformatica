@@ -50,7 +50,7 @@ _STOP_WORDS_EXTRAS = {
     "approach", "work", "article", "section",
 }
 _STOP_WORDS.update(_STOP_WORDS_EXTRAS)
-
+SAIDA_AVALIACAO = "./saida/avaliacao"
 
 # ── Utilitários ────────────────────────────────────────────────────────────────
 
@@ -289,7 +289,7 @@ def exibir_avaliacao(avaliacao: dict):
 def executar_etapa4(
     resultados_etapa2: list[dict],
     caminho_gabarito: str = CAMINHO_GABARITO,
-    diretorio_saida: str = "./saida/avaliacao",
+    diretorio_saida: str = SAIDA_AVALIACAO,
 ) -> dict:
     """
     Executa a Etapa 4 — Avaliação de Desempenho.
