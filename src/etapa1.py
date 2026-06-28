@@ -1,3 +1,9 @@
+"""
+Etapa 1 — Leitura de PDFs, Pré-processamento e Modelos de Linguagem
+Biblioteca de leitura: pdfplumber
+NLP: NLTK (stopwords, lematização, stemming opcional, n-gramas)
+"""
+
 import os
 import re
 from collections import Counter
@@ -8,7 +14,9 @@ from nltk.corpus import stopwords, wordnet
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import sent_tokenize, word_tokenize
 
-# Download dos recursos NLTK necessários ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# ── Download dos recursos NLTK necessários ─────────────────────────────────────
+
 def baixar_recursos_nltk():
     recursos = [
         "punkt",
@@ -22,7 +30,8 @@ def baixar_recursos_nltk():
         nltk.download(r, quiet=True)
 
 
-# Leitura de PDF ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ── Leitura de PDF ─────────────────────────────────────────────────────────────
+
 def ler_pdf(caminho_pdf: str) -> str:
     """Extrai todo o texto de um arquivo PDF usando pdfplumber."""
     texto = ""
@@ -42,7 +51,7 @@ def ler_pdfs_do_diretorio(diretorio: str) -> dict[str, str]:
     Lê todos os PDFs de um diretório.
     Retorna dicionário {nome_arquivo: texto_completo}.
     """
-    artigos:dict[str, str] = {}
+    artigos: dict[str, str] = {}
     arquivos_pdf = [f for f in os.listdir(diretorio) if f.lower().endswith(".pdf")]
 
     if not arquivos_pdf:
@@ -61,9 +70,8 @@ def ler_pdfs_do_diretorio(diretorio: str) -> dict[str, str]:
     return artigos
 
 
-# Separação: corpo do artigo x referências ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ── Separação: corpo do artigo x referências ───────────────────────────────────
 
-# Padrões comuns de início da seção de referências
 _PADROES_REFERENCIAS = [
     r"\breferences\b",
     r"\bbibliography\b",
@@ -82,7 +90,7 @@ _REGEX_REFERENCIAS = re.compile(
 def separar_corpo_e_referencias(texto: str) -> tuple[str, str]:
     """
     Divide o texto em (corpo_do_artigo, secao_referencias).
-    Busca a ÚLTIMA ocorrência do cabeçalho de referências para evitar
+    Usa a ÚLTIMA ocorrência do cabeçalho de referências para evitar
     falsos positivos em menções no corpo do texto.
     """
     matches = list(_REGEX_REFERENCIAS.finditer(texto))
@@ -90,7 +98,6 @@ def separar_corpo_e_referencias(texto: str) -> tuple[str, str]:
     if not matches:
         return texto, ""
 
-    # Usa a última ocorrência (a seção real de referências fica no final)
     ultimo_match = matches[-1]
     inicio_refs = ultimo_match.start()
 
@@ -106,22 +113,21 @@ def extrair_referencias(secao_referencias: str) -> list[str]:
     """
     Extrai referências individuais da seção de referências.
     Suporta dois formatos comuns:
-      - Numeradas:  [1] Autor, Título...  ou  1. Autor, Título...
-      - Por autor:  Sobrenome, I. (Ano). Título...
+      - Numeradas: [1] Autor...  ou  1. Autor...
+      - Por autor: Sobrenome, I. (Ano). Título...
     """
     if not secao_referencias:
         return []
 
     linhas = secao_referencias.splitlines()
 
-    # Remove a linha de cabeçalho (ex: "References", "Bibliography")
+    # Remove cabeçalho (ex: "References")
     if linhas and _REGEX_REFERENCIAS.search(linhas[0]):
         linhas = linhas[1:]
 
     referencias = []
     ref_atual = ""
 
-    # Padrões de início de nova referência
     inicio_numerada = re.compile(r"^\s*(\[\d+\]|\d+[\.\)])\s+\S")
     inicio_autor = re.compile(r"^\s*[A-Z][a-zA-Zá-ú\-]+,\s+[A-Z]")
 
@@ -142,7 +148,7 @@ def extrair_referencias(secao_referencias: str) -> list[str]:
     if ref_atual.strip():
         referencias.append(ref_atual.strip())
 
-    # Filtra entradas muito curtas (ruído de extração)
+    # Filtra entradas muito curtas (ruído)
     referencias = [r for r in referencias if len(r) > 20]
 
     return referencias
@@ -152,13 +158,13 @@ def extrair_referencias(secao_referencias: str) -> list[str]:
 
 _STOP_WORDS = set(stopwords.words("english"))
 
-# Stop words extras comuns em artigos científicos que poluem os resultados
+# Stop words extras comuns em artigos científicos
 _STOP_WORDS_EXTRAS = {
     "et", "al", "fig", "figure", "table", "also", "show", "shown",
     "use", "used", "using", "based", "however", "thus", "therefore",
     "paper", "study", "result", "results", "proposed", "method",
     "approach", "work", "article", "section", "ieee", "doi", "http",
-    "https", "www", "e", "g", "i",
+    "https", "www", "e", "g", "i", "ii", "iii", "iv",
 }
 
 _STOP_WORDS.update(_STOP_WORDS_EXTRAS)
@@ -168,7 +174,7 @@ _LEMMATIZER = WordNetLemmatizer()
 
 
 def _get_wordnet_pos(tag: str) -> str:
-    """Converte tag do POS tagger do NLTK para formato do WordNet."""
+    """Converte tag POS do NLTK para formato do WordNet."""
     if tag.startswith("J"):
         return wordnet.ADJ
     if tag.startswith("V"):
@@ -185,23 +191,16 @@ def preprocessar_texto(
 ) -> list[str]:
     """
     Pré-processa o texto e retorna lista de tokens limpos.
-
-    Passos:
-      1. Tokenização
-      2. Lowercase + filtra apenas palavras alfabéticas com 3+ chars
-      3. Remove stop words
-      4. Lematização (padrão) e/ou stemming (opcional)
+    1. Tokenização
+    2. Lowercase + filtra apenas palavras alfabéticas com 3+ chars
+    3. Remove stop words
+    4. Lematização (padrão) e/ou stemming (opcional)
     """
     tokens = word_tokenize(texto.lower())
-
-    # Mantém apenas palavras alfabéticas com pelo menos 3 caracteres
     tokens = [t for t in tokens if t.isalpha() and len(t) >= 3]
-
-    # Remove stop words
     tokens = [t for t in tokens if t not in _STOP_WORDS]
 
     if lematizar:
-        # POS tagging melhora a qualidade da lematização
         tags = nltk.pos_tag(tokens)
         tokens = [
             _LEMMATIZER.lemmatize(token, _get_wordnet_pos(tag))
@@ -232,7 +231,7 @@ def contar_ngramas(tokens: list[str], n: int) -> dict[tuple, int]:
 
 
 def top_n_termos(contagem: dict, n: int = 10) -> list[tuple]:
-    """Retorna os N termos/n-gramas mais frequentes como lista de (termo, freq)."""
+    """Retorna os N termos/n-gramas mais frequentes."""
     return Counter(contagem).most_common(n)
 
 
@@ -245,29 +244,20 @@ def processar_artigo(nome: str, texto_completo: str) -> dict:
     """
     print(f"\n  Processando: {nome}")
 
-    # 1. Separar corpo e referências
     corpo, secao_refs = separar_corpo_e_referencias(texto_completo)
     print(f"    Corpo: {len(corpo)} chars | Refs: {len(secao_refs)} chars")
 
-    # 2. Extrair referências individuais
     lista_referencias = extrair_referencias(secao_refs)
     print(f"    Referências extraídas: {len(lista_referencias)}")
 
-    # 3. Pré-processar apenas o corpo
     tokens = preprocessar_texto(corpo, lematizar=True, aplicar_stemming=False)
     print(f"    Tokens após pré-processamento: {len(tokens)}")
 
-    # 4. Bag of Words (unigramas)
     bow = bag_of_words(tokens)
-
-    # 5. Bigramas e trigramas
     contagem_bigramas = contar_ngramas(tokens, 2)
     contagem_trigramas = contar_ngramas(tokens, 3)
 
-    # 6. Top 10 termos (unigramas)
     top10_unigramas = top_n_termos(bow, 10)
-
-    # 7. Top 10 bigramas e trigramas
     top10_bigramas = top_n_termos(contagem_bigramas, 10)
     top10_trigramas = top_n_termos(contagem_trigramas, 10)
 
@@ -288,8 +278,7 @@ def processar_artigo(nome: str, texto_completo: str) -> dict:
 
 def top_termos_globais(resultados: list[dict], n: int = 10) -> list[tuple]:
     """
-    Agrega os BoW de todos os artigos e retorna os N termos mais frequentes
-    considerando o corpus inteiro.
+    Agrega os BoW de todos os artigos e retorna os N termos mais frequentes.
     """
     contador_global = Counter()
     for r in resultados:
@@ -297,7 +286,7 @@ def top_termos_globais(resultados: list[dict], n: int = 10) -> list[tuple]:
     return contador_global.most_common(n)
 
 
-# ── Exibição formatada dos resultados ─────────────────────────────────────────
+# ── Exibição formatada ─────────────────────────────────────────────────────────
 
 def exibir_resultado(resultado: dict):
     nome = resultado["nome"]
@@ -324,12 +313,11 @@ def exibir_resultado(resultado: dict):
         print(f"    ... e mais {len(resultado['referencias']) - 5} referência(s)")
 
 
-# ── Função principal da etapa ──────────────────────────────────────────────────
+# ── Ponto de entrada da etapa ──────────────────────────────────────────────────
 
 def executar_etapa1(diretorio_artigos: str) -> list[dict]:
     """
     Ponto de entrada da Etapa 1.
-    Recebe o caminho do diretório com os PDFs.
     Retorna lista de dicionários com os resultados de cada artigo.
     """
     baixar_recursos_nltk()
@@ -338,21 +326,18 @@ def executar_etapa1(diretorio_artigos: str) -> list[dict]:
     print("  ETAPA 1: Leitura, Pré-processamento e Modelos de Linguagem")
     print("="*60)
 
-    # Lê todos os PDFs
     artigos_texto = ler_pdfs_do_diretorio(diretorio_artigos)
 
     if not artigos_texto:
         print("[ERRO] Nenhum artigo para processar.")
         return []
 
-    # Processa cada artigo
     resultados = []
     for nome, texto in artigos_texto.items():
         resultado = processar_artigo(nome, texto)
         resultados.append(resultado)
         exibir_resultado(resultado)
 
-    # Top 10 global (corpus inteiro)
     print("\n" + "="*60)
     print("  TOP 10 TERMOS — CORPUS COMPLETO (todos os artigos)")
     print("="*60)
@@ -364,6 +349,5 @@ def executar_etapa1(diretorio_artigos: str) -> list[dict]:
 
 
 if __name__ == "__main__":
-    # Altere o caminho abaixo para o diretório com seus PDFs
     DIRETORIO = "./artigos"
     executar_etapa1(DIRETORIO)

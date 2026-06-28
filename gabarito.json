@@ -1,0 +1,32 @@
+{
+  "_instrucoes": "Preencha este arquivo com os 4 artigos que você vai anotar manualmente. Renomeie para gabarito.json. Apague este campo _instrucoes antes de usar.",
+  "_formato": "O nome da chave deve ser EXATAMENTE igual ao nome do arquivo PDF (incluindo extensão). Os textos devem ser copiados diretamente do artigo — trechos representativos de cada campo.",
+
+  "artigo1.pdf": {
+    "objetivo": "Cole aqui o trecho do artigo que descreve o objetivo principal. Ex: The objective of this paper is to propose a framework for...",
+    "problema": "Cole aqui o trecho que descreve o problema abordado. Ex: Existing methods fail to handle... / The main challenge is...",
+    "metodo": "Cole aqui o trecho que descreve a metodologia utilizada. Ex: We applied a convolutional neural network trained on... / Interviews and surveys were conducted to...",
+    "contribuicao": "Cole aqui o trecho que descreve a contribuição do artigo. Ex: Our study contributes to... / The main contribution of this work is..."
+  },
+
+  "artigo2.pdf": {
+    "objetivo": "",
+    "problema": "",
+    "metodo": "",
+    "contribuicao": ""
+  },
+
+  "artigo3.pdf": {
+    "objetivo": "",
+    "problema": "",
+    "metodo": "",
+    "contribuicao": ""
+  },
+
+  "artigo4.pdf": {
+    "objetivo": "",
+    "problema": "",
+    "metodo": "",
+    "contribuicao": ""
+  }
+}
