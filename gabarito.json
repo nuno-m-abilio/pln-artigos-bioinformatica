@@ -1,32 +1,29 @@
 {
-  "_instrucoes": "Preencha este arquivo com os 4 artigos que você vai anotar manualmente. Renomeie para gabarito.json. Apague este campo _instrucoes antes de usar.",
-  "_formato": "O nome da chave deve ser EXATAMENTE igual ao nome do arquivo PDF (incluindo extensão). Os textos devem ser copiados diretamente do artigo — trechos representativos de cada campo.",
-
-  "artigo1.pdf": {
-    "objetivo": "Cole aqui o trecho do artigo que descreve o objetivo principal. Ex: The objective of this paper is to propose a framework for...",
-    "problema": "Cole aqui o trecho que descreve o problema abordado. Ex: Existing methods fail to handle... / The main challenge is...",
-    "metodo": "Cole aqui o trecho que descreve a metodologia utilizada. Ex: We applied a convolutional neural network trained on... / Interviews and surveys were conducted to...",
-    "contribuicao": "Cole aqui o trecho que descreve a contribuição do artigo. Ex: Our study contributes to... / The main contribution of this work is..."
+  "An Integrated Approach to Knowledge and Prediction Modeling of Breast Cancer Metastasis Using Gene Regulatory Networks.pdf": {
+    "objetivo": "In this study, we propose the use of gene regulatory networks (GRNs) to address the limitations inherent in current methodologies and to bridge the divide between biological knowledge and predictive modeling.",
+    "problema": "Despite their impressive predictive capabilities, a significant drawback of machine learning models is their lack of explainability; they are often opaque and provide limited insight into biological processes. Although post-hoc analysis of these models can offer some gene or pathway-level insights [28], translating data into meaningful biological knowledge poses a challenge. Consequently, comprehensive knowledge models, such as transcriptional regulatory networks, cannot be easily integrated into these machine learning frameworks. This gap highlights the ongoing challenge of aligning computational advances with tangible biological insights which ultimately limits the direct application of these predictions in clinical settings.",
+    "metodo": "Our methodology consists of two major segments, the first of which revolves around building knowledge representation models that accurately represent the state of the system for a given disease context. In the second part, regression models were repurposed to produce a classifier that can utilize network differences to classify an unknown sample.",
+    "contribuicao": "Our work bridges a significant gap between knowledge discovery and outcome classification in the study of breast cancer metastasis and has the potential to be applied to other complex diseases."
   },
 
-  "artigo2.pdf": {
-    "objetivo": "",
-    "problema": "",
-    "metodo": "",
-    "contribuicao": ""
+  "Transfer Learning for Improving Neuroimaging-Based Diagnostic Classification.pdf": {
+    "objetivo": "Therefore, in this study, we proposed a transfer learning framework designed to transform knowledge learned from one site and apply it to others, along with a robust interpretability method to enhance the reliability of model explanations.",
+    "problema": "However, like GCN or CNN, while Transformers demonstrated promising performance within the dataset from a single site, their generalizability to datasets from other sites, beyond the training site, remains limited. Additionally, their interpretability in network neuroscience is a significant concern, as post-hoc interpretability strategies often yield inconsistent and unreliable outputs, making it challenging to derive meaningful insights from model decisions.",
+    "metodo": "We applied a CNN model in the target domain (ABIDE) for classification between ASD and controls, with transferred parameters initializing the pre-trained VAE model from the source domain. Classification performance was evaluated in terms of change in classification accuracy with an increasing number of healthy subjects from HCP used during pre-training. The inputs were FC matrices from each subject. LRP was used to provide mechanistic and semantic insights underlying the classification decision.",
+    "contribuicao": "Our main contributions can be summarized as follows: 1) We designed a stacked autoencoder model with L1-regularization to learn the compressed representations of heathy controls in the source domain (HCP + ABIDE datasets) in an unsupervised manner. Then the pretrained model was fine-tuned on the remaining ABIDE datasets to perform classification task. 2) To mitigate the challenge of class imbalance prevalent in transfer learning, particularly where the number of healthy controls significantly outnumbers the patients with disorders, we introduced a generative VAE framework. This framework learns the representations of ASD samples and synthesizes ASD labels to construct a balanced dataset. 3) We introduce an interpretable method called the LRP algorithm, which is able to identify key connectivity patterns relevant to predicting the disease."
   },
 
-  "artigo3.pdf": {
-    "objetivo": "",
-    "problema": "",
-    "metodo": "",
-    "contribuicao": ""
+  "Context-Aware Hierarchical Fusion for Drug Relational Learning.pdf": {
+    "objetivo": "We aim to learn context-aware representations of drug pairs for robust predictions in drug relational tasks.",
+    "problema": "While structural similarity methods provide a foundation for drug relation prediction, two drugs with similar chemical structures may exhibit distinct biological activities or pharmacological properties.",
+    "metodo": "In this work, inspired by multimodality fusion and the rule of transitivity in knowledge graph, we take drug-drug-context triplets as input and explicitly learn the relations of drug-drug and drug-context in a hierarchical architecture to ensure the learning of related drug latent representation conditioned with the other drug and a given context.",
+    "contribuicao": "In conclusion, our work provides a unified and generalizable framework for context-aware drug relational learning, offering robust solutions to key challenges in polypharmacy and drug interaction prediction. By explicitly modeling context at the atomic level, our approach advances the state of the art in DRL and holds potential for broader applications in drug development and precision medicine."
   },
 
-  "artigo4.pdf": {
-    "objetivo": "",
-    "problema": "",
-    "metodo": "",
-    "contribuicao": ""
+  "Molecular-Driven Multi-View Hypergraph Contrastive Learning for Drug-Drug Interaction Prediction.pdf": {
+    "objetivo": "To address these issues, we propose a hypergraph contrastive learning framework based on molecular view,",
+    "problema": "However, due to the current limitations of biotechnology, the shortcomings of traditional multi-view methods have resulted in a large number of hidden interactions between drugs that remain undiscovered.",
+    "metodo": "We then perform contrastive learning between the structural hypergraph, semantic hypergraph, and molecular view to enhance the performance and robustness of the model.",
+    "contribuicao": "The key innovations of this work are summarized as follows: The contrastive learning of the three-view framework (molecular view, structural hypergraph, and semantic hypergraph) extract intra-molecular and inter-molecular information from different perspectives. In the structural hypergraph, hypernodes model pharmacokinetic or pharmacodynamic relationships between drug pairs, enabling more connections between drug pairs to reveal latent DDIs. The integration of hyperchains allows the semantic view to overcome the limitations of multi-hop propagation and topology-dependent information dissemination, thereby facilitating the learning of higher-order drug features. Variations in relative positions between hypernodes and drug node pairs yield different feature proportions: proximal hypernodes favor structural features, while distant ones favor nonstructural information like pharmacological properties. The incorporation of cross-attention mechanisms enables mutual weighted fusion of features from structural hypergraph and semantic hypergraph, thereby enriching each hypergraph’s original features with contextual information and relevant features from the other hypergraph. We designed three types of loss functions to enhance model accuracy and precision from different perspectives, including supervised loss, inconsistency loss, and contrastive loss, while simultaneously implementing three-view feature alignment. Comprehensive multi-perspective experimental analysis has fully validated the effectiveness of Mol-HCL in drug-drug interaction prediction."
   }
 }

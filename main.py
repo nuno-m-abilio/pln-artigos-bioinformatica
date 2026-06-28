@@ -9,9 +9,13 @@ import sys
 from src.etapa1 import executar_etapa1
 from src.etapa2 import executar_etapa2
 from src.etapa3 import executar_etapa3
+from src.etapa4 import executar_etapa4
 from src.visualizacoes import executar_visualizacoes
 
 # ── Configuração ───────────────────────────────────────────────────────────────
+
+CAMINHO_GABARITO = "./gabarito.json"
+SAIDA_AVALIACAO = "./saida/avaliacao"
 
 DIRETORIO_ARTIGOS = "./artigos"
 DIRETORIO_SAIDA_JSONLD = "./saida/jsonld"
@@ -52,7 +56,7 @@ def main():
     # ── Etapa 4 (Janaina) ──────────────────────────────────────────────────────
     print("\n" + "="*60)
     print("  ETAPA 4: Avaliação de Desempenho")
-    print("  → Será integrada por Janaina (src/etapa4.py)")
+    executar_etapa4(resultados, CAMINHO_GABARITO , SAIDA_AVALIACAO)
     print("="*60)
 
     print("\n" + "="*60)
