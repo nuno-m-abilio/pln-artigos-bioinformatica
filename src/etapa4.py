@@ -1,28 +1,3 @@
-"""
-Etapa 4 — Avaliação de Desempenho do Sistema de Extração
-Responsável: Janaina
-
-Método de avaliação: sobreposição de palavras (word overlap)
-Métricas: Precisão, Recall e F1 por campo (objetivo, problema, metodo, contribuicao)
-
-Como funciona:
-  - O gabarito (anotação manual) é um arquivo JSON com os campos corretos de 4 artigos
-  - O sistema extrai os campos automaticamente (Etapa 2)
-  - Compara-se as palavras do trecho extraído com as do gabarito (ignorando stopwords)
-  - Calcula Precisão, Recall e F1 com base nas palavras em comum
-
-Formato do gabarito (gabarito.json):
-{
-  "nome_do_arquivo.pdf": {
-    "objetivo": "texto do objetivo conforme o artigo",
-    "problema": "texto do problema conforme o artigo",
-    "metodo": "texto do método conforme o artigo",
-    "contribuicao": "texto da contribuição conforme o artigo"
-  },
-  ...
-}
-"""
-
 import json
 import os
 import re
@@ -37,7 +12,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 
-# ── Configuração ───────────────────────────────────────────────────────────────
+# Configuração ───────────────────────────────────────────────────────────────
 
 CAMINHO_GABARITO = "./gabarito.json"
 CAMPOS = ["objetivo", "problema", "metodo", "contribuicao"]
@@ -52,7 +27,7 @@ _STOP_WORDS_EXTRAS = {
 _STOP_WORDS.update(_STOP_WORDS_EXTRAS)
 SAIDA_AVALIACAO = "./saida/avaliacao"
 
-# ── Utilitários ────────────────────────────────────────────────────────────────
+# Utilitários ────────────────────────────────────────────────────────────────
 
 def tokenizar_para_avaliacao(texto: str) -> set[str]:
     """
@@ -96,7 +71,7 @@ def juntar_trechos(trechos: list[str]) -> str:
     return " ".join(trechos)
 
 
-# ── Avaliação principal ────────────────────────────────────────────────────────
+# Avaliação principal ────────────────────────────────────────────────────────
 
 def avaliar_artigo(
     nome: str,
@@ -182,7 +157,7 @@ def avaliar_sistema(resultados_etapa2: list[dict], gabarito: dict) -> dict:
     }
 
 
-# ── Visualizações de avaliação ─────────────────────────────────────────────────
+# Visualizações de avaliação ─────────────────────────────────────────────────
 
 def plotar_metricas_por_campo(avaliacao: dict, diretorio_saida: str):
     """Gráfico de barras agrupadas: P, R, F1 por campo."""
@@ -259,7 +234,7 @@ def plotar_f1_por_artigo(avaliacao: dict, diretorio_saida: str):
     print(f"    [AVALIAÇÃO] Heatmap salvo: {caminho}")
 
 
-# ── Exibição no terminal ───────────────────────────────────────────────────────
+# Exibição no terminal ───────────────────────────────────────────────────────
 
 def exibir_avaliacao(avaliacao: dict):
     print("\n" + "="*60)
@@ -284,7 +259,7 @@ def exibir_avaliacao(avaliacao: dict):
     print(f"\n  Média Global → Precisão: {g['precisao']:.4f} | Recall: {g['recall']:.4f} | F1: {g['f1']:.4f}")
 
 
-# ── Ponto de entrada da etapa ──────────────────────────────────────────────────
+# Ponto de entrada da etapa ──────────────────────────────────────────────────
 
 def executar_etapa4(
     resultados_etapa2: list[dict],

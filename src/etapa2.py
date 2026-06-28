@@ -1,14 +1,8 @@
-"""
-Etapa 2 — Extração de Informações do Artigo Científico
-Abordagem: regex + heurísticas de contexto (sem ML)
-Campos extraídos: Objetivo, Problema, Método, Contribuição
-"""
-
 import re
 from nltk.tokenize import sent_tokenize
 
 
-# ── Padrões de extração ────────────────────────────────────────────────────────
+# Padrões de extração ────────────────────────────────────────────────────────
 
 _PADROES_OBJETIVO = [
     r"the (main\s+)?objective(s)? of (this|the) (paper|article|study|work|research)",
@@ -64,7 +58,7 @@ _RE_METODO = _compilar_padroes(_PADROES_METODO)
 _RE_CONTRIBUICAO = _compilar_padroes(_PADROES_CONTRIBUICAO)
 
 
-# ── Janela de contexto ─────────────────────────────────────────────────────────
+# Janela de contexto ─────────────────────────────────────────────────────────
 
 def _extrair_com_janela(
     sentencas: list[str],
@@ -95,7 +89,7 @@ def _extrair_com_janela(
     return trechos
 
 
-# ── Heurísticas de seção ───────────────────────────────────────────────────────
+# Heurísticas de seção ───────────────────────────────────────────────────────
 
 _RE_INTRO = re.compile(
     r"(introduction|background|motivation|overview)",
@@ -145,7 +139,7 @@ def _dividir_em_secoes(texto: str) -> dict[str, str]:
     return {k: "\n".join(v) for k, v in secoes.items()}
 
 
-# ── Extração principal ─────────────────────────────────────────────────────────
+# Extração principal ─────────────────────────────────────────────────────────
 
 def extrair_informacoes(corpo: str) -> dict:
     """
@@ -189,7 +183,7 @@ def extrair_informacoes(corpo: str) -> dict:
     }
 
 
-# ── Exibição ───────────────────────────────────────────────────────────────────
+# Exibição ───────────────────────────────────────────────────────────────────
 
 def exibir_extracao(nome: str, extracao: dict):
     print(f"\n{'='*60}")
@@ -213,7 +207,7 @@ def exibir_extracao(nome: str, extracao: dict):
             print("    [não encontrado]")
 
 
-# ── Ponto de entrada da etapa ──────────────────────────────────────────────────
+# Ponto de entrada da etapa ──────────────────────────────────────────────────
 
 def executar_etapa2(resultados_etapa1: list[dict]) -> list[dict]:
     """
