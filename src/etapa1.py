@@ -1,9 +1,3 @@
-"""
-Etapa 1 — Leitura de PDFs, Pré-processamento e Modelos de Linguagem
-Biblioteca de leitura: pdfplumber
-NLP: NLTK (stopwords, lematização, stemming opcional, n-gramas)
-"""
-
 import os
 import re
 from collections import Counter
@@ -15,7 +9,7 @@ from nltk.stem import PorterStemmer, WordNetLemmatizer
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 
-# ── Download dos recursos NLTK necessários ─────────────────────────────────────
+# Download dos recursos NLTK necessários ─────────────────────────────────────
 
 def baixar_recursos_nltk():
     recursos = [
@@ -30,7 +24,7 @@ def baixar_recursos_nltk():
         nltk.download(r, quiet=True)
 
 
-# ── Leitura de PDF ─────────────────────────────────────────────────────────────
+# Leitura de PDF ─────────────────────────────────────────────────────────────
 
 _REGEX_RODAPE_IEEE = re.compile(
     r"Authorized licensed use limited to:.*?Restrictions apply\.",
@@ -103,7 +97,7 @@ def ler_pdfs_do_diretorio(diretorio: str) -> dict[str, str]:
     return artigos
 
 
-# ── Separação: corpo do artigo x referências ───────────────────────────────────
+# Separação: corpo do artigo x referências ───────────────────────────────────
 
 _PADROES_REFERENCIAS = [
     r"\breferences\b",
@@ -140,7 +134,7 @@ def separar_corpo_e_referencias(texto: str) -> tuple[str, str]:
     return corpo, referencias
 
 
-# ── Extração de referências individuais ───────────────────────────────────────
+# Extração de referências individuais ───────────────────────────────────────
 
 def extrair_referencias(secao_referencias: str) -> list[str]:
     """
@@ -170,7 +164,7 @@ def extrair_referencias(secao_referencias: str) -> list[str]:
     return referencias
 
 
-# ── Pré-processamento ──────────────────────────────────────────────────────────
+# Pré-processamento ──────────────────────────────────────────────────────────
 
 _STOP_WORDS = set(stopwords.words("english"))
 
@@ -231,7 +225,7 @@ def preprocessar_texto(
     return tokens
 
 
-# ── Modelos de linguagem ───────────────────────────────────────────────────────
+# Modelos de linguagem ───────────────────────────────────────────────────────
 
 def bag_of_words(tokens: list[str]) -> dict[str, int]:
     """Retorna dicionário {termo: frequência} — Bag of Words."""
@@ -253,7 +247,7 @@ def top_n_termos(contagem: dict, n: int = 10) -> list[tuple]:
     return Counter(contagem).most_common(n)
 
 
-# ── Processamento completo de um artigo ───────────────────────────────────────
+# Processamento completo de um artigo ───────────────────────────────────────
 
 def processar_artigo(nome: str, texto_completo: str) -> dict:
     """
@@ -292,7 +286,7 @@ def processar_artigo(nome: str, texto_completo: str) -> dict:
     }
 
 
-# ── Agregação entre todos os artigos ──────────────────────────────────────────
+# Agregação entre todos os artigos ──────────────────────────────────────────
 
 def top_termos_globais(resultados: list[dict], n: int = 10) -> list[tuple]:
     """
@@ -304,7 +298,7 @@ def top_termos_globais(resultados: list[dict], n: int = 10) -> list[tuple]:
     return contador_global.most_common(n)
 
 
-# ── Exibição formatada ─────────────────────────────────────────────────────────
+# Exibição formatada ─────────────────────────────────────────────────────────
 
 def exibir_resultado(resultado: dict):
     nome = resultado["nome"]
@@ -331,7 +325,7 @@ def exibir_resultado(resultado: dict):
         print(f"    ... e mais {len(resultado['referencias']) - 5} referência(s)")
 
 
-# ── Ponto de entrada da etapa ──────────────────────────────────────────────────
+# Ponto de entrada da etapa ──────────────────────────────────────────────────
 
 def executar_etapa1(diretorio_artigos: str) -> list[dict]:
     """

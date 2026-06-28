@@ -1,17 +1,10 @@
-"""
-Etapa 3 — Ontologia de Artigo Científico em JSON-LD
-Modela cada artigo como instância da classe ArtigoCientifico e serializa
-em JSON-LD com @context customizado.
-Gera: um arquivo por artigo + um arquivo consolidado com todos.
-"""
-
 import json
 import os
 import re
 from datetime import datetime
 
 
-# ── @context da ontologia ──────────────────────────────────────────────────────
+# @context da ontologia ──────────────────────────────────────────────────────
 
 CONTEXT = {
     "@vocab": "http://example.org/ontologia-artigo#",
@@ -67,7 +60,7 @@ CONTEXT = {
 }
 
 
-# ── Utilidades ────────────────────────────────────────────────────────────────
+# Utilidades ────────────────────────────────────────────────────────────────
 
 def _slugify(texto: str) -> str:
     """Converte string para slug seguro para usar em @id."""
@@ -99,7 +92,7 @@ def _confianca_campo(trechos: list[str]) -> str:
     return "alta"
 
 
-# ── Modelagem do artigo como JSON-LD ─────────────────────────────────────────
+# Modelagem do artigo como JSON-LD ─────────────────────────────────────────
 
 def modelar_artigo_jsonld(resultado: dict) -> dict:
     """
@@ -117,7 +110,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
     id_artigo = f"_:artigo_{slug}"
     grafo: list[dict] = []
 
-    # ── Nós de Objetivo ──────────────────────────────────────────────────────
+    # Nós de Objetivo ──────────────────────────────────────────────────────
     ids_objetivo = []
     for i, trecho in enumerate(extracao.get("objetivo", []), 1):
         node_id = f"_:obj_{slug}_{i}"
@@ -129,7 +122,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_objetivo.append(node_id)
 
-    # ── Nós de Problema ──────────────────────────────────────────────────────
+    # Nós de Problema ──────────────────────────────────────────────────────
     ids_problema = []
     for i, trecho in enumerate(extracao.get("problema", []), 1):
         node_id = f"_:prob_{slug}_{i}"
@@ -141,7 +134,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_problema.append(node_id)
 
-    # ── Nós de Metodologia ───────────────────────────────────────────────────
+    # Nós de Metodologia ───────────────────────────────────────────────────
     ids_metodo = []
     for i, trecho in enumerate(extracao.get("metodo", []), 1):
         node_id = f"_:met_{slug}_{i}"
@@ -153,7 +146,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_metodo.append(node_id)
 
-    # ── Nós de Contribuição ──────────────────────────────────────────────────
+    # Nós de Contribuição ──────────────────────────────────────────────────
     ids_contribuicao = []
     for i, trecho in enumerate(extracao.get("contribuicao", []), 1):
         node_id = f"_:contrib_{slug}_{i}"
@@ -165,7 +158,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_contribuicao.append(node_id)
 
-    # ── Nós de Referência ────────────────────────────────────────────────────
+    # Nós de Referência ────────────────────────────────────────────────────
     ids_referencias = []
     for i, ref in enumerate(referencias, 1):
         node_id = f"_:ref_{slug}_{i}"
@@ -176,7 +169,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_referencias.append(node_id)
 
-    # ── Nós de Termos ────────────────────────────────────────────────────────
+    # Nós de Termos ────────────────────────────────────────────────────────
     ids_termos = []
     for termo, freq in top10:
         node_id = f"_:termo_{slug}_{_slugify(termo)}"
@@ -188,7 +181,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
         })
         ids_termos.append(node_id)
 
-    # ── Nó principal do Artigo ───────────────────────────────────────────────
+    # Nó principal do Artigo ───────────────────────────────────────────────
     no_artigo: dict = {
         "@id": id_artigo,
         "@type": "Artigo",
@@ -222,7 +215,7 @@ def modelar_artigo_jsonld(resultado: dict) -> dict:
     }
 
 
-# ── Salvar arquivo individual ─────────────────────────────────────────────────
+# Salvar arquivo individual ─────────────────────────────────────────────────
 
 def salvar_jsonld_artigo(resultado: dict, diretorio_saida: str) -> str:
     """
@@ -243,7 +236,7 @@ def salvar_jsonld_artigo(resultado: dict, diretorio_saida: str) -> str:
     return caminho
 
 
-# ── Salvar arquivo consolidado ────────────────────────────────────────────────
+# Salvar arquivo consolidado ────────────────────────────────────────────────
 
 def salvar_jsonld_consolidado(resultados: list[dict], diretorio_saida: str) -> str:
     """
@@ -269,7 +262,7 @@ def salvar_jsonld_consolidado(resultados: list[dict], diretorio_saida: str) -> s
     return caminho
 
 
-# ── Ponto de entrada da etapa ─────────────────────────────────────────────────
+# Ponto de entrada da etapa ─────────────────────────────────────────────────
 
 def executar_etapa3(
     resultados: list[dict],

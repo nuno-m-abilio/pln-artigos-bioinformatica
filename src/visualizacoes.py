@@ -1,13 +1,3 @@
-"""
-Visualizações — requisitos das Observações do enunciado
-  1. Nuvem de palavras geral
-  2. Gráfico de barras dos top termos
-  3. Heatmap de coocorrência de termos entre artigos
-  4. Gráfico temporal (termos por ano de publicação)
-  5. Termos de trabalhos futuros
-Bibliotecas: matplotlib, wordcloud, collections, re
-"""
-
 import os
 import re
 from collections import Counter
@@ -26,7 +16,7 @@ except ImportError:
     print("[AVISO] wordcloud não instalada. Nuvens de palavras serão puladas.")
 
 
-# ── Regex de trabalhos futuros ─────────────────────────────────────────────────
+# Regex de trabalhos futuros ─────────────────────────────────────────────────
 
 _RE_FUTURO = re.compile(
     r"(future (work|research|study|studies|direction|plan)|"
@@ -40,7 +30,7 @@ _RE_FUTURO = re.compile(
 _RE_ANO = re.compile(r"\b(19|20)(\d{2})\b")
 
 
-# ── Utilitários ────────────────────────────────────────────────────────────────
+# Utilitários ────────────────────────────────────────────────────────────────
 
 def _garantir_diretorio(caminho: str):
     os.makedirs(caminho, exist_ok=True)
@@ -57,7 +47,7 @@ def _inferir_ano(nome_arquivo: str) -> int | None:
     return int(m.group()) if m else None
 
 
-# ── 1. Nuvem de palavras ───────────────────────────────────────────────────────
+# 1. Nuvem de palavras ───────────────────────────────────────────────────────
 
 def nuvem_de_palavras(
     resultados: list[dict],
@@ -110,7 +100,7 @@ def nuvem_de_palavras(
             _salvar_figura(fig, os.path.join(diretorio_saida, f"nuvem_{slug}.png"))
 
 
-# ── 2. Barras de frequência dos top termos ────────────────────────────────────
+# 2. Barras de frequência dos top termos ────────────────────────────────────
 
 def barras_top_termos(resultados: list[dict], diretorio_saida: str, top_n: int = 20):
     """Gráfico de barras horizontal dos N termos mais frequentes no corpus."""
@@ -136,7 +126,7 @@ def barras_top_termos(resultados: list[dict], diretorio_saida: str, top_n: int =
     _salvar_figura(fig, os.path.join(diretorio_saida, "barras_top_termos.png"))
 
 
-# ── 3. Heatmap de coocorrência de termos entre artigos ────────────────────────
+# 3. Heatmap de coocorrência de termos entre artigos ────────────────────────
 
 def heatmap_coocorrencia(resultados: list[dict], diretorio_saida: str, top_n: int = 15):
     """
@@ -175,7 +165,7 @@ def heatmap_coocorrencia(resultados: list[dict], diretorio_saida: str, top_n: in
     _salvar_figura(fig, os.path.join(diretorio_saida, "heatmap_coocorrencia.png"))
 
 
-# ── 4. Evolução temporal dos termos ───────────────────────────────────────────
+# 4. Evolução temporal dos termos ───────────────────────────────────────────
 
 def grafico_temporal(resultados: list[dict], diretorio_saida: str, top_n: int = 8):
     """
@@ -221,7 +211,7 @@ def grafico_temporal(resultados: list[dict], diretorio_saida: str, top_n: int = 
     _salvar_figura(fig, os.path.join(diretorio_saida, "temporal_termos.png"))
 
 
-# ── 5. Termos de trabalhos futuros ────────────────────────────────────────────
+# 5. Termos de trabalhos futuros ────────────────────────────────────────────
 
 def extrair_trabalhos_futuros(resultados: list[dict]) -> dict[str, list[str]]:
     """
@@ -297,7 +287,7 @@ def grafico_termos_futuros(resultados: list[dict], diretorio_saida: str):
     return futuros
 
 
-# ── Ponto de entrada ───────────────────────────────────────────────────────────
+# Ponto de entrada ───────────────────────────────────────────────────────────
 
 def executar_visualizacoes(resultados: list[dict], diretorio_saida: str = "./saida/visualizacoes"):
     """Executa todas as visualizações."""

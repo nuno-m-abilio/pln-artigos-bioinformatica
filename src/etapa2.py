@@ -1,13 +1,8 @@
-"""
-Etapa 2 — Extração de Informações do Artigo Científico (ATUALIZADO)
-Abordagem: regex avançado + heurísticas de contexto (sem ML)
-Campos extraídos: Objetivo, Problema, Método, Contribuição
-"""
-
 import re
 from nltk.tokenize import sent_tokenize
 
-# ── Padrões de extração melhorados (Tolerância a advérbios e espaços) ───────────
+
+# Padrões de extração ────────────────────────────────────────────────────────
 
 _PADROES_OBJETIVO = [
     r"the\s+(main\s+|primary\s+)?objective(s)?\s+of\s+(this|the)\s+(paper|article|study|work|research)",
@@ -61,7 +56,8 @@ _RE_PROBLEMA = _compilar_padroes(_PADROES_PROBLEMA)
 _RE_METODO = _compilar_padroes(_PADROES_METODO)
 _RE_CONTRIBUICAO = _compilar_padroes(_PADROES_CONTRIBUICAO)
 
-# ── Janela de contexto ─────────────────────────────────────────────────────────
+
+# Janela de contexto ─────────────────────────────────────────────────────────
 
 def _extrair_com_janela(
     sentencas: list[str],
@@ -85,7 +81,8 @@ def _extrair_com_janela(
 
     return trechos
 
-# ── Heurísticas de seção ───────────────────────────────────────────────────────
+
+# Heurísticas de seção ───────────────────────────────────────────────────────
 
 # Melhorado para capturar numerações antes do título, ex: "1. Introduction" ou "I. Background"
 _RE_INTRO = re.compile(
@@ -129,7 +126,7 @@ def _dividir_em_secoes(texto: str) -> dict[str, str]:
     return {k: "\n".join(v) for k, v in secoes.items()}
 
 
-# ── Extração principal ─────────────────────────────────────────────────────────
+# Extração principal ─────────────────────────────────────────────────────────
 
 def extrair_informacoes(corpo: str) -> dict:
     secoes = _dividir_em_secoes(corpo)
@@ -175,7 +172,8 @@ def extrair_informacoes(corpo: str) -> dict:
         "contribuicao": contribuicao,
     }
 
-# ── Exibição ───────────────────────────────────────────────────────────────────
+
+# Exibição ───────────────────────────────────────────────────────────────────
 
 def exibir_extracao(nome: str, extracao: dict):
     print(f"\n{'='*60}")
@@ -198,7 +196,8 @@ def exibir_extracao(nome: str, extracao: dict):
         else:
             print("    [não encontrado]")
 
-# ── Ponto de entrada da etapa ──────────────────────────────────────────────────
+
+# Ponto de entrada da etapa ──────────────────────────────────────────────────
 
 def executar_etapa2(resultados_etapa1: list[dict]) -> list[dict]:
     print("\n" + "="*60)
